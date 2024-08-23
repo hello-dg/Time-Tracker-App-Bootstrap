@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, String, Boolean
+from sqlite3 import Date
 from datetime import datetime, date, time
+
 
 app = Flask(__name__)
 app.secret_key = "SECRET_KEY_PLACEHOLDER"
@@ -17,16 +21,18 @@ Task_List = []
 
 
 class Entry(db.Model):
-    id: db.Column(db.Integer, primary_key=True)
-    category: db.Column(db.String(250), nullable=False)
-    project: db.Column(db.String(250), nullable=False)
-    task: db.Column(db.String(250), nullable=False)
-    note: db.Column(db.String(600), nullable=False)
-    tags: db.Column(db.String(400), nullable=False)
-    billable: db.Column(db.Boolean, default=False)
-    date: db.Column(db.Date, nullable=False)
-    start_time: db.Column(db.Time, nullable=False)
-    end_time: db.Column(db.Time, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    category: Mapped[str] = mapped_column(String(200), nullable=False)
+    project: Mapped[str] = mapped_column(String(200), nullable=False)
+    task: Mapped[str] = mapped_column(String(200), nullable=False)
+    note: Mapped[str] = mapped_column(String(600), nullable=False)
+    tags: Mapped[str] = mapped_column(String(400), nullable=False)
+    billable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    date: Mapped[str] = mapped_column(String(25), nullable=True)
+    start_time: Mapped[str] = mapped_column(String(25), nullable=False)
+    end_time: Mapped[str] = mapped_column(String(25), nullable=False)
+    duration_hours: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
+    duration_decimal: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
 
     def __repr__(self):
         return f'<task {self.task}>'
@@ -38,7 +44,7 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    pass
+    return render_template('index.html')
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])
@@ -79,3 +85,7 @@ def add_task():
 @app.route('/delete/<int:task_name>')
 def delete_task(task_name):
     pass
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
