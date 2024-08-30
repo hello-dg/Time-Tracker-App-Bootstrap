@@ -11,45 +11,46 @@
     <div class="container border" id="navbar">Time Tracker App</div>
 
     <div class="container border" id="form">
-        <div class="div d-flex" id="form-top-row">
-            <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Category</button>
-            <ul class="dropdown-menu searchCategory">
-                <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchCategory">
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Category Item</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
-            </ul>
-            <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Project</button>
-            <ul class="dropdown-menu searchProject">
-                <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchProject">
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Project Item</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
-            </ul>
-            <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Task</button>
-            <ul class="dropdown-menu searchTask">
-                <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchTask">
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Task Item</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
-            </ul>
-            <img src="static/icons/tag_not_selected_64.png" class="m-2 " width="32" height="32">
-            <input type="checkbox" class="btn-check" name="billable" id="billable" autocomplete="off">
-            <label class="btn btn-outline-success bold m-2" for="billable">$$</label>
-        </div>
-        <div class="div d-flex" id="form-middle-row">
-
-            <input type="date" class="form-control col m-2" id="start_date" name="start_date" value="{{ today }}" required>
-            <input type="time" class="form-control col m-2" id="start_time" name="start_time" value="{{ time }}" required>
-            <input type="time" class="form-control col m-2" id="end_time" name="end_time" value="{{ time }}" required>
-        </div>
-        <div class="div d-flex" id="form-bottom-row">
-            <input type="text" class="form-control col m-2" placeholder="New Note" name="task">
-            <button class="btn btn-primary m-2 w-25" type="submit" id="submit">Add Entry</button>
-        </div>
+        <form action="{{ url_for('add_entry') }}" id="time-entry-form" method="POST">
+            <div class="div d-flex" id="form-top-row">
+                <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Category</button>
+                <ul class="dropdown-menu searchCategory" id="category">
+                    <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchCategory">
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Category Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                </ul>
+                <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Project</button>
+                <ul class="dropdown-menu searchProject" id="project">
+                    <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchProject">
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Project Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                </ul>
+                <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Task</button>
+                <ul class="dropdown-menu searchTask" id="task">
+                    <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchTask">
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Task Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                </ul>
+                <img src="static/icons/tag_not_selected_64.png" class="m-2 " width="32" height="32">
+                <input type="checkbox" class="btn-check" name="billable" id="billable" autocomplete="off">
+                <label class="btn btn-outline-success bold m-2" for="billable">$$</label>
+            </div>
+            <div class="div d-flex" id="form-middle-row">
+                <input type="date" class="form-control col m-2" id="date" name="date" value="{{ today }}" required>
+                <input type="time" class="form-control col m-2" id="start_time" name="start_time" value="{{ time }}" required>
+                <input type="time" class="form-control col m-2" id="end_time" name="end_time" value="{{ time }}" required>
+            </div>
+            <div class="div d-flex" id="form-bottom-row">
+                <input type="text" class="form-control col m-2" placeholder="New Note" id="note" name="note">
+                <button class="btn btn-primary m-2 w-25" type="submit" id="submit">Add Entry</button>
+            </div>
+        </form>
     </div>
 
-    <div class="container border" id="history">
+    <div class="container border d-flex" id="history">
         <ul class="list-group">
             <li class="list-group-item bg-light">
                 <div class="row flex-fill mb-1">

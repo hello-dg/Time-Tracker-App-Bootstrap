@@ -22,21 +22,24 @@ Task_List = []
 
 class Entry(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    category: Mapped[str] = mapped_column(String(200), nullable=False)
-    project: Mapped[str] = mapped_column(String(200), nullable=False)
-    task: Mapped[str] = mapped_column(String(200), nullable=False)
-    note: Mapped[str] = mapped_column(String(600), nullable=False)
-    tags: Mapped[str] = mapped_column(String(400), nullable=False)
-    billable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    date: Mapped[str] = mapped_column(String(25), nullable=True)
-    start_time: Mapped[str] = mapped_column(String(25), nullable=False)
-    end_time: Mapped[str] = mapped_column(String(25), nullable=False)
-    duration_hours: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
-    duration_decimal: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
+    category: Mapped[str] = mapped_column(String(200), nullable=True)
+    project: Mapped[str] = mapped_column(String(200), nullable=True)
+    task: Mapped[str] = mapped_column(String(200), nullable=True)
+    note: Mapped[str] = mapped_column(String(600), nullable=True)
+    date: Mapped[str] = mapped_column(String(200), nullable=True)
+    start_time: Mapped[str] = mapped_column(String(200), nullable=True)
+    end_time: Mapped[str] = mapped_column(String(20), nullable=True)
+
 
     def __repr__(self):
         return f'<task {self.task}>'
 
+
+# ADD TO DATABASE LATER
+# tags: Mapped[str] = mapped_column(String(400), nullable=False)
+# billable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+# duration_hours: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
+# duration_decimal: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
 
 with app.app_context():
     db.create_all()
@@ -49,8 +52,29 @@ def index():
 
 @app.route('/add-entry', methods=['GET', 'POST'])
 def add_entry():
-    pass
+    category_data = request.form.get('category')
+    project_data = request.form.get('project')
+    task_data = request.form.get('task')
+    note_data = request.form.get('note')
+    date_data = request.form.get('date')
+    start_time_data = str(request.form.get('start_time'))
+    end_time_data = str(request.form.get('end_time'))
 
+    new_entry = Entry(category=category_data, project=project_data, task=task_data, note=note_data, date=date_data, start_time=start_time_data, end_time=end_time_data)
+
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        print("Added to database")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+
+    print(category_data)
+    print(project_data)
+    print(task_data)
+
+    return redirect(url_for('index'))
 
 @app.route('/delete/<int:entry_id>')
 def delete_entry(entry_id):
