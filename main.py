@@ -26,6 +26,7 @@ class Entry(db.Model):
     project: Mapped[str] = mapped_column(String(200), nullable=True)
     task: Mapped[str] = mapped_column(String(200), nullable=True)
     note: Mapped[str] = mapped_column(String(600), nullable=True)
+    tags: Mapped[str] = mapped_column(String(400), nullable=True)
     billable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     date: Mapped[str] = mapped_column(String(200), nullable=True)
     start_time: Mapped[str] = mapped_column(String(200), nullable=True)
@@ -48,7 +49,10 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    today = datetime.now().strftime('%Y-%m-%d')
+    current_time = datetime.now().strftime('%H:%M')
+    entries = Entry.query.order_by(Entry.date.desc(), Entry.start_time.desc()).all()
+    return render_template('index.html', entries=entries, today=today, time=current_time, datetime=datetime, str=str)
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])

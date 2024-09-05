@@ -12,7 +12,7 @@
 
     <div class="container border" id="form">
         <form action="{{ url_for('add_entry') }}" id="time-entry-form" method="POST">
-            <div class="div d-flex" id="form-top-row">
+            <div class="div d-flex align-items-center" id="form-top-row">
 
                 <!--CATEGORY DROPDOWN-->
                 <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Category</button>
@@ -44,7 +44,23 @@
                 </ul>
                 <input type="hidden" name="task" id="task-input">
 
-                <img src="static/icons/tag_not_selected_64.png" class="m-2 " width="32" height="32">
+                <!--TAG SELECTION-->
+                    <div class="form-group text-center" id="tagSelector">
+                    <div class="dropdown">
+                        <img src="{{ url_for('static', filename='icons/tag_not_selected_64.png') }}"
+                             class="dropdown-toggle"
+                             style="width: 32px; height: 32px; cursor: pointer;"
+                             aria-label="Tag Select"
+                             id="tagDropdown"
+                             data-bs-toggle="dropdown"
+                             aria-expanded="false">
+
+                        <div class="dropdown-menu form-check" aria-labelledby="tagDropdown" id="tagChecks">
+                            <span hidden>No Tags Available</span>
+                            <!--JAVASCRIPT TO HANDLE TAG OPTIONS-->
+                        </div>
+                    </div>
+                </div>
 
                 <!--BILLABLE SELECTION-->
                 <input type="checkbox" class="btn-check" name="billable" id="billable" autocomplete="off">
@@ -69,33 +85,34 @@
                 <div class="row flex-fill mb-1">
                     <div class="fw-bold fs-5">Previous Entries</div>
                 </div>
-                {% for task in tasks %}
+                {% for entry in entries %}
                     <div class="row border rounded bg-white mb-2 pb-2">
                         <div class="row align-items-center mt-2">
-                            <div class="col-3 fw-bold border-end">{{ task.project }}</div>
-                            <div class="col-3">{{ task.activity }}</div>
-                            {% if task.billable %}
+                            <div class="col-3 fw-bold border-end">{{ entry.project }}</div>
+                            <div class="col-3">{{ entry.activity }}</div>
+                            {% if entry.billable %}
                                 <div class="col-1 fw-bold fs-5 text-success text-center border-start">$</div>
                             {% else %}
                                 <div class="col-1 border-start">&nbsp</div>
                             {% endif %}
-                            <div class="col-2 border-start text-muted fw-bold text-center">{{ datetime.strptime(task.start_date, "%Y-%m-%d").strftime("%m/%d/%Y") }}</div>
-                            <div class="col-3 border-start border-end text-muted fw-bold text-center">{{ str(datetime.strptime(task.start_time, "%H:%M").strftime("%I:%M %p")) }} - {{ str(datetime.strptime(task.end_time, "%H:%M").strftime("%I:%M %p")) }}</div>
+                            <div class="col-2 border-start text-muted fw-bold text-center">{{ datetime.strptime(entry.date, "%Y-%m-%d").strftime("%m/%d/%Y") }}</div>
+                            <div class="col-3 border-start border-end text-muted fw-bold text-center">{{ str(datetime.strptime(entry.start_time, "%H:%M").strftime("%I:%M %p")) }} - {{ str(datetime.strptime(entry.end_time, "%H:%M").strftime("%I:%M %p")) }}</div>
                         </div>
                         <div class="row d-flex align-items-center mt-1">
-                            <div class="col-3 text-primary">{{ task.client }}</div>
+                            <div class="col-3 text-primary">{{ entry.client }}</div>
                             <div class="col-8 text-end">
-                                {% if task.tags != "" %}
-                                    {% for tags in task.tags.split(',') %}
+                                {% if entry.tags %}
+                                    {% for tags in entry.tags.split(',') %}
                                         <div class="d-inline-block rounded bg-info p-1" style="font-size: 14px;">{{ tags }}</div>
                                     {% endfor %}
+                                {% else %}
                                 {% endif %}
                             </div>
                             <div class="border-start border-end col-1 text-center">
-                                <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger btn-sm" style="font-size: 10px;">X</a>
+                                <a href="{{ url_for('delete_task', task_id=entry.id) }}" class="btn btn-danger btn-sm" style="font-size: 10px;">X</a>
                             </div>
                         </div>
-                        <div class="fst-italic" style="font-size: 12px;">{{ task.task }}</div>
+                        <div class="fst-italic" style="font-size: 12px;">{{ entry.task }}</div>
                     </div>
 
                 {% endfor %}
