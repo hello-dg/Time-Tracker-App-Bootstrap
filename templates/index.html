@@ -79,7 +79,7 @@
         </form>
     </div>
 
-    <div class="container border d-flex" id="history">
+    <div class="container border" id="history">
         <ul class="list-group">
             <li class="list-group-item bg-light">
                 <div class="row flex-fill mb-1">
@@ -89,7 +89,7 @@
                     <div class="row border rounded bg-white mb-2 pb-2">
                         <div class="row align-items-center mt-2">
                             <div class="col-3 fw-bold border-end">{{ entry.project }}</div>
-                            <div class="col-3">{{ entry.activity }}</div>
+                            <div class="col-3">{{ entry.task }}</div>
                             {% if entry.billable %}
                                 <div class="col-1 fw-bold fs-5 text-success text-center border-start">$</div>
                             {% else %}
@@ -99,7 +99,7 @@
                             <div class="col-3 border-start border-end text-muted fw-bold text-center">{{ str(datetime.strptime(entry.start_time, "%H:%M").strftime("%I:%M %p")) }} - {{ str(datetime.strptime(entry.end_time, "%H:%M").strftime("%I:%M %p")) }}</div>
                         </div>
                         <div class="row d-flex align-items-center mt-1">
-                            <div class="col-3 text-primary">{{ entry.client }}</div>
+                            <div class="col-3 text-primary">{{ entry.category }}</div>
                             <div class="col-8 text-end">
                                 {% if entry.tags %}
                                     {% for tags in entry.tags.split(',') %}
@@ -109,10 +109,10 @@
                                 {% endif %}
                             </div>
                             <div class="border-start border-end col-1 text-center">
-                                <a href="{{ url_for('delete_task', task_id=entry.id) }}" class="btn btn-danger btn-sm" style="font-size: 10px;">X</a>
+                                <a href="{{ url_for('delete_entry', entry_id=entry.id) }}" class="btn btn-danger btn-sm" style="font-size: 10px;">X</a>
                             </div>
                         </div>
-                        <div class="fst-italic" style="font-size: 12px;">{{ entry.task }}</div>
+                        <div class="fst-italic" style="font-size: 12px;">{{ entry.note }}</div>
                     </div>
 
                 {% endfor %}

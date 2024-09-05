@@ -83,9 +83,13 @@ def add_entry():
 
     return redirect(url_for('index'))
 
+
 @app.route('/delete/<int:entry_id>')
 def delete_entry(entry_id):
-    pass
+    entry = Entry.query.get_or_404(entry_id)
+    db.session.delete(entry)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
 @app.route('/add-category', methods=['GET', 'POST'])
