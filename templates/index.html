@@ -13,27 +13,37 @@
     <div class="container border" id="form">
         <form action="{{ url_for('add_entry') }}" id="time-entry-form" method="POST">
             <div class="div d-flex" id="form-top-row">
+
+                <!--CATEGORY DROPDOWN-->
                 <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Category</button>
-                <ul class="dropdown-menu searchCategory" id="category">
+                <ul class="dropdown-menu searchCategory">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchCategory">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Category Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="Category Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Category Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="Another Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="One More Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
                 </ul>
+                <input type="hidden" name="category" id="category-input">
+
+                <!--PROJECT DROPDOWN-->
                 <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Project</button>
-                <ul class="dropdown-menu searchProject" id="project">
+                <ul class="dropdown-menu searchProject">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchProject">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Project Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="Project Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Project Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="Another Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="One More Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
                 </ul>
+                <input type="hidden" name="project" id="project-input">
+
+                <!--TASK DROPDOWN-->
                 <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Task</button>
-                <ul class="dropdown-menu searchTask" id="task">
+                <ul class="dropdown-menu searchTask">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchTask">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Task Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="Task Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Task Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="Another Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="One More Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
                 </ul>
+                <input type="hidden" name="task" id="task-input">
+
                 <img src="static/icons/tag_not_selected_64.png" class="m-2 " width="32" height="32">
                 <input type="checkbox" class="btn-check" name="billable" id="billable" autocomplete="off">
                 <label class="btn btn-outline-success bold m-2" for="billable">$$</label>
@@ -91,6 +101,7 @@
     </div>
 
     <script src="static/js/search.js"></script>
+    <script src="static/js/select.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
