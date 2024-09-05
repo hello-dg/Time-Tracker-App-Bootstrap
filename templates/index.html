@@ -45,9 +45,12 @@
                 <input type="hidden" name="task" id="task-input">
 
                 <img src="static/icons/tag_not_selected_64.png" class="m-2 " width="32" height="32">
+
+                <!--BILLABLE SELECTION-->
                 <input type="checkbox" class="btn-check" name="billable" id="billable" autocomplete="off">
                 <label class="btn btn-outline-success bold m-2" for="billable">$$</label>
             </div>
+
             <div class="div d-flex" id="form-middle-row">
                 <input type="date" class="form-control col m-2" id="date" name="date" value="{{ today }}" required>
                 <input type="time" class="form-control col m-2" id="start_time" name="start_time" value="{{ time }}" required>

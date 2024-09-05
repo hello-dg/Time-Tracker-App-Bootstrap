@@ -9,7 +9,7 @@ from datetime import datetime, date, time
 app = Flask(__name__)
 app.secret_key = "SECRET_KEY_PLACEHOLDER"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///entries.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///timetracker.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -26,6 +26,7 @@ class Entry(db.Model):
     project: Mapped[str] = mapped_column(String(200), nullable=True)
     task: Mapped[str] = mapped_column(String(200), nullable=True)
     note: Mapped[str] = mapped_column(String(600), nullable=True)
+    billable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     date: Mapped[str] = mapped_column(String(200), nullable=True)
     start_time: Mapped[str] = mapped_column(String(200), nullable=True)
     end_time: Mapped[str] = mapped_column(String(20), nullable=True)
@@ -56,11 +57,13 @@ def add_entry():
     project_data = request.form.get('project')
     task_data = request.form.get('task')
     note_data = request.form.get('note')
+    billable_data = request.form.get('billable')
+    billable_boolean = billable_data == 'on'
     date_data = request.form.get('date')
     start_time_data = str(request.form.get('start_time'))
     end_time_data = str(request.form.get('end_time'))
 
-    new_entry = Entry(category=category_data, project=project_data, task=task_data, note=note_data, date=date_data, start_time=start_time_data, end_time=end_time_data)
+    new_entry = Entry(category=category_data, project=project_data, task=task_data, note=note_data, billable=billable_boolean, date=date_data, start_time=start_time_data, end_time=end_time_data)
 
     try:
         db.session.add(new_entry)
