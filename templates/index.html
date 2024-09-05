@@ -18,9 +18,9 @@
                 <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Category</button>
                 <ul class="dropdown-menu searchCategory">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchCategory">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="Category Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Category Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="Another Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="One More Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                    {% for category in categories %}
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="{{ category.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ category.name }}</a></li>
+                    {% endfor %}
                 </ul>
                 <input type="hidden" name="category" id="category-input">
 

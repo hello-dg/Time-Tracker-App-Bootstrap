@@ -33,6 +33,11 @@ class Entry(db.Model):
     end_time: Mapped[str] = mapped_column(String(20), nullable=True)
 
 
+class Category(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
+
+
     def __repr__(self):
         return f'<task {self.task}>'
 
@@ -52,7 +57,8 @@ def index():
     today = datetime.now().strftime('%Y-%m-%d')
     current_time = datetime.now().strftime('%H:%M')
     entries = Entry.query.order_by(Entry.date.desc(), Entry.start_time.desc()).all()
-    return render_template('index.html', entries=entries, today=today, time=current_time, datetime=datetime, str=str)
+    categories = Category.query.order_by(Category.name.asc()).all()
+    return render_template('index.html', entries=entries, categories=categories, today=today, time=current_time, datetime=datetime, str=str)
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])
@@ -94,7 +100,19 @@ def delete_entry(entry_id):
 
 @app.route('/add-category', methods=['GET', 'POST'])
 def add_category():
-    pass
+    name = "Wilson, Wade"
+    new_entry = Category(name=name)
+
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        print("Added to database")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+
+    print(name)
+    return redirect(url_for('index'))
 
 
 @app.route('/delete/<int:category_name>')
