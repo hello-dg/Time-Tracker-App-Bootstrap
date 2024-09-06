@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Boolean
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import Integer, String, Boolean, create_engine, MetaData
 from sqlite3 import Date
 from datetime import datetime, date, time
 
@@ -14,28 +14,27 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Lists for Category, Project, and Task dropdowns
-Category_List = []
-Project_List = []
-Task_List = []
-
 
 class Category(db.Model):
+    __tablename__ = "categories"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
 
 
 class Project(db.Model):
+    __tablename__ = "projects"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
 
 
 class Task(db.Model):
+    __tablename__ = "tasks"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
 
 
 class Entry(db.Model):
+    __tablename__ = "entries"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     category: Mapped[str] = mapped_column(String(200), nullable=True)
     project: Mapped[str] = mapped_column(String(200), nullable=True)
