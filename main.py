@@ -4,6 +4,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean, create_engine, MetaData
 from sqlite3 import Date
 from datetime import datetime, date, time
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
 
 app = Flask(__name__)
@@ -15,36 +16,44 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+class User(db.Model):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False, unique=False)
+    email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(String(100), nullable=False, unique=False)
+
+
 class Category(db.Model):
     __tablename__ = "categories"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
 
 
 class Project(db.Model):
     __tablename__ = "projects"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
 
 
 class Task(db.Model):
     __tablename__ = "tasks"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
 
 
 class Entry(db.Model):
     __tablename__ = "entries"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    category: Mapped[str] = mapped_column(String(200), nullable=True)
-    project: Mapped[str] = mapped_column(String(200), nullable=True)
-    task: Mapped[str] = mapped_column(String(200), nullable=True)
+    category: Mapped[str] = mapped_column(String(200), nullable=False)
+    project: Mapped[str] = mapped_column(String(200), nullable=False)
+    task: Mapped[str] = mapped_column(String(200), nullable=False)
     note: Mapped[str] = mapped_column(String(600), nullable=True)
     tags: Mapped[str] = mapped_column(String(400), nullable=True)
     billable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    date: Mapped[str] = mapped_column(String(200), nullable=True)
-    start_time: Mapped[str] = mapped_column(String(200), nullable=True)
-    end_time: Mapped[str] = mapped_column(String(20), nullable=True)
+    date: Mapped[str] = mapped_column(String(200), nullable=False)
+    start_time: Mapped[str] = mapped_column(String(200), nullable=False)
+    end_time: Mapped[str] = mapped_column(String(20), nullable=False)
 
 
     def __repr__(self):
@@ -197,6 +206,29 @@ def delete_task(task_id):
     db.session.delete(task)
     db.session.commit()
     return redirect(url_for('tasks'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+
+        new_user = User(
+            name=request.form.get('name'),
+            email=request.form.get('email'),
+            password=request.form.get('password')
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return render_template('index.html')
+
+    return render_template('register.html')
+
+
+@app.route('/login')
+def login():
+    return render_template("login.html")
 
 
 if __name__ == '__main__':
