@@ -29,7 +29,7 @@
                 <ul class="dropdown-menu searchProject">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchProject">
                     {% for project in projects %}
-                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="{{ project.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ project.name }}</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="{{ project.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ project.name }}</a></li>
                     {% endfor %}
                 </ul>
                 <input type="hidden" name="project" id="project-input">
@@ -39,7 +39,7 @@
                 <ul class="dropdown-menu searchTask">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchTask">
                     {% for task in tasks %}
-                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="{{ task.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ task.name }}</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="{{ task.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ task.name }}</a></li>
                     {% endfor %}
                 </ul>
                 <input type="hidden" name="task" id="task-input">
