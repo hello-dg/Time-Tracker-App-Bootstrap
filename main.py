@@ -67,10 +67,10 @@ def index():
     today = datetime.now().strftime('%Y-%m-%d')
     current_time = datetime.now().strftime('%H:%M')
     entries = Entry.query.order_by(Entry.date.desc(), Entry.start_time.desc()).all()
-    categories = Category.query.order_by(Category.name.asc()).all()
+    category_data = Category.query.order_by(Category.name.asc()).all()
     projects = Project.query.order_by(Project.name.asc()).all()
     tasks = Task.query.order_by(Task.name.asc()).all()
-    return render_template('index.html', entries=entries, categories=categories, projects=projects, tasks=tasks, today=today, time=current_time, datetime=datetime, str=str)
+    return render_template('index.html', entries=entries, categories=category_data, projects=projects, tasks=tasks, today=today, time=current_time, datetime=datetime, str=str)
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])
@@ -110,27 +110,34 @@ def delete_entry(entry_id):
     return redirect(url_for('index'))
 
 
+@app.route('/categories')
+def categories():
+    category_data = Category.query.order_by(Category.name.asc()).all()
+    return render_template('categories.html', categories=category_data)
+
+
 @app.route('/add-category', methods=['GET', 'POST'])
 def add_category():
-    name = "Marvel Entertainment"
-    new_entry = Category(name=name)
+    category_name = request.form.get('new-category')
+    new_category = Category(name=category_name)
 
     try:
-        db.session.add(new_entry)
+        db.session.add(new_category)
         db.session.commit()
         print("Added to database")
     except Exception as e:
         db.session.rollback()
         print(f"Error: {e}")
 
-    print(name)
-    return redirect(url_for('index'))
+    return redirect(url_for('categories'))
 
 
-@app.route('/delete/<int:category_name>')
-def delete_category(category_name):
-    pass
-
+@app.route('/delete-category/<int:category_id>')
+def delete_category(category_id):
+    category = Category.query.get_or_404(category_id)
+    db.session.delete(category)
+    db.session.commit()
+    return redirect(url_for('categories'))
 
 @app.route('/add-project', methods=['GET', 'POST'])
 def add_project():
@@ -149,8 +156,8 @@ def add_project():
     return redirect(url_for('index'))
 
 
-@app.route('/delete/<int:project_name>')
-def delete_project(project_name):
+@app.route('/delete-project/<int:project_id>')
+def delete_project(project_id):
     pass
 
 
@@ -171,8 +178,8 @@ def add_task():
     return redirect(url_for('index'))
 
 
-@app.route('/delete/<int:task_name>')
-def delete_task(task_name):
+@app.route('/delete-task/<int:task_id>')
+def delete_task(task_id):
     pass
 
 
