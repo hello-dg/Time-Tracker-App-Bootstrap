@@ -28,9 +28,9 @@
                 <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Project</button>
                 <ul class="dropdown-menu searchProject">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchProject">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="Project Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Project Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="Another Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="One More Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                    {% for project in projects %}
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="{{ project.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ project.name }}</a></li>
+                    {% endfor %}
                 </ul>
                 <input type="hidden" name="project" id="project-input">
 
@@ -38,9 +38,9 @@
                 <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Task</button>
                 <ul class="dropdown-menu searchTask">
                     <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchTask">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="Task Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Task Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="Another Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>Another Item</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="One More Item" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>One More Item</a></li>
+                    {% for task in tasks %}
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="{{ task.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ task.name }}</a></li>
+                    {% endfor %}
                 </ul>
                 <input type="hidden" name="task" id="task-input">
 

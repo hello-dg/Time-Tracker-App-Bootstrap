@@ -9,7 +9,7 @@ from datetime import datetime, date, time
 app = Flask(__name__)
 app.secret_key = "SECRET_KEY_PLACEHOLDER"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///timetracker.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///time_tracker.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -18,6 +18,21 @@ db = SQLAlchemy(app)
 Category_List = []
 Project_List = []
 Task_List = []
+
+
+class Category(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
+
+
+class Project(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
+
+
+class Task(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
 
 
 class Entry(db.Model):
@@ -31,11 +46,6 @@ class Entry(db.Model):
     date: Mapped[str] = mapped_column(String(200), nullable=True)
     start_time: Mapped[str] = mapped_column(String(200), nullable=True)
     end_time: Mapped[str] = mapped_column(String(20), nullable=True)
-
-
-class Category(db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(200), nullable=True, unique=True)
 
 
     def __repr__(self):
@@ -58,7 +68,9 @@ def index():
     current_time = datetime.now().strftime('%H:%M')
     entries = Entry.query.order_by(Entry.date.desc(), Entry.start_time.desc()).all()
     categories = Category.query.order_by(Category.name.asc()).all()
-    return render_template('index.html', entries=entries, categories=categories, today=today, time=current_time, datetime=datetime, str=str)
+    projects = Project.query.order_by(Project.name.asc()).all()
+    tasks = Task.query.order_by(Task.name.asc()).all()
+    return render_template('index.html', entries=entries, categories=categories, projects=projects, tasks=tasks, today=today, time=current_time, datetime=datetime, str=str)
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])
@@ -100,7 +112,7 @@ def delete_entry(entry_id):
 
 @app.route('/add-category', methods=['GET', 'POST'])
 def add_category():
-    name = "Wilson, Wade"
+    name = "Marvel Entertainment"
     new_entry = Category(name=name)
 
     try:
@@ -122,7 +134,19 @@ def delete_category(category_name):
 
 @app.route('/add-project', methods=['GET', 'POST'])
 def add_project():
-    pass
+    name = "Payroll"
+    new_entry = Project(name=name)
+
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        print("Added to database")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+
+    print(name)
+    return redirect(url_for('index'))
 
 
 @app.route('/delete/<int:project_name>')
@@ -132,7 +156,19 @@ def delete_project(project_name):
 
 @app.route('/add-task', methods=['GET', 'POST'])
 def add_task():
-    pass
+    name = "Preparation"
+    new_entry = Task(name=name)
+
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        print("Added to database")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+
+    print(name)
+    return redirect(url_for('index'))
 
 
 @app.route('/delete/<int:task_name>')
