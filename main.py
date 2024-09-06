@@ -139,48 +139,65 @@ def delete_category(category_id):
     db.session.commit()
     return redirect(url_for('categories'))
 
+
+@app.route('/projects')
+def projects():
+    project_data = Project.query.order_by(Project.name.asc()).all()
+    return render_template('projects.html', projects=project_data)
+
+
 @app.route('/add-project', methods=['GET', 'POST'])
 def add_project():
-    name = "Payroll"
-    new_entry = Project(name=name)
+    project_name = request.form.get('new-project')
+    new_project = Project(name=project_name)
 
     try:
-        db.session.add(new_entry)
+        db.session.add(new_project)
         db.session.commit()
         print("Added to database")
     except Exception as e:
         db.session.rollback()
         print(f"Error: {e}")
 
-    print(name)
-    return redirect(url_for('index'))
+    return redirect(url_for('projects'))
 
 
 @app.route('/delete-project/<int:project_id>')
 def delete_project(project_id):
-    pass
+    project = Project.query.get_or_404(project_id)
+    db.session.delete(project)
+    db.session.commit()
+    return redirect(url_for('projects'))
+
+
+@app.route('/tasks')
+def tasks():
+    task_data = Task.query.order_by(Task.name.asc()).all()
+    return render_template('tasks.html', tasks=task_data)
 
 
 @app.route('/add-task', methods=['GET', 'POST'])
 def add_task():
-    name = "Preparation"
-    new_entry = Task(name=name)
+    task_name = request.form.get('new-task')
+    new_task = Task(name=task_name)
 
     try:
-        db.session.add(new_entry)
+        db.session.add(new_task)
         db.session.commit()
         print("Added to database")
     except Exception as e:
         db.session.rollback()
         print(f"Error: {e}")
 
-    print(name)
-    return redirect(url_for('index'))
+    return redirect(url_for('tasks'))
 
 
 @app.route('/delete-task/<int:task_id>')
 def delete_task(task_id):
-    pass
+    task = Task.query.get_or_404(task_id)
+    db.session.delete(task)
+    db.session.commit()
+    return redirect(url_for('tasks'))
 
 
 if __name__ == '__main__':
