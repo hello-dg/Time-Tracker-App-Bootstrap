@@ -5,6 +5,7 @@ from sqlalchemy import Integer, String, Boolean, create_engine, MetaData
 from sqlite3 import Date
 from datetime import datetime, date, time
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
@@ -15,8 +16,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+# Configure Flask-Login's Login Manager
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-class User(db.Model):
+
+# Create a user_loader callback
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get_or_404(User, user_id)
+
+
+class User(UserMixin, db.Model):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=False)
@@ -72,16 +83,19 @@ with app.app_context():
 
 @app.route('/')
 def index():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
     today = datetime.now().strftime('%Y-%m-%d')
     current_time = datetime.now().strftime('%H:%M')
     entries = Entry.query.order_by(Entry.date.desc(), Entry.start_time.desc()).all()
     category_data = Category.query.order_by(Category.name.asc()).all()
-    projects = Project.query.order_by(Project.name.asc()).all()
-    tasks = Task.query.order_by(Task.name.asc()).all()
-    return render_template('index.html', entries=entries, categories=category_data, projects=projects, tasks=tasks, today=today, time=current_time, datetime=datetime, str=str)
+    project_data = Project.query.order_by(Project.name.asc()).all()
+    task_data = Task.query.order_by(Task.name.asc()).all()
+    return render_template('index.html', entries=entries, categories=category_data, projects=project_data, tasks=task_data, today=today, time=current_time, datetime=datetime, str=str)
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])
+@login_required
 def add_entry():
     category_data = request.form.get('category')
     project_data = request.form.get('project')
@@ -111,6 +125,7 @@ def add_entry():
 
 
 @app.route('/delete/<int:entry_id>')
+@login_required
 def delete_entry(entry_id):
     entry = Entry.query.get_or_404(entry_id)
     db.session.delete(entry)
@@ -119,12 +134,14 @@ def delete_entry(entry_id):
 
 
 @app.route('/categories')
+@login_required
 def categories():
     category_data = Category.query.order_by(Category.name.asc()).all()
     return render_template('categories.html', categories=category_data)
 
 
 @app.route('/add-category', methods=['GET', 'POST'])
+@login_required
 def add_category():
     category_name = request.form.get('new-category')
     new_category = Category(name=category_name)
@@ -141,6 +158,7 @@ def add_category():
 
 
 @app.route('/delete-category/<int:category_id>')
+@login_required
 def delete_category(category_id):
     category = Category.query.get_or_404(category_id)
     db.session.delete(category)
@@ -149,12 +167,14 @@ def delete_category(category_id):
 
 
 @app.route('/projects')
+@login_required
 def projects():
     project_data = Project.query.order_by(Project.name.asc()).all()
     return render_template('projects.html', projects=project_data)
 
 
 @app.route('/add-project', methods=['GET', 'POST'])
+@login_required
 def add_project():
     project_name = request.form.get('new-project')
     new_project = Project(name=project_name)
@@ -171,6 +191,7 @@ def add_project():
 
 
 @app.route('/delete-project/<int:project_id>')
+@login_required
 def delete_project(project_id):
     project = Project.query.get_or_404(project_id)
     db.session.delete(project)
@@ -179,12 +200,14 @@ def delete_project(project_id):
 
 
 @app.route('/tasks')
+@login_required
 def tasks():
     task_data = Task.query.order_by(Task.name.asc()).all()
     return render_template('tasks.html', tasks=task_data)
 
 
 @app.route('/add-task', methods=['GET', 'POST'])
+@login_required
 def add_task():
     task_name = request.form.get('new-task')
     new_task = Task(name=task_name)
@@ -201,6 +224,7 @@ def add_task():
 
 
 @app.route('/delete-task/<int:task_id>')
+@login_required
 def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
     db.session.delete(task)
@@ -211,24 +235,51 @@ def delete_task(task_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        hash_and_salted_password = generate_password_hash(
+            request.form.get('password'),
+            method='pbkdf2:sha256',
+            salt_length=8
+        )
 
         new_user = User(
             name=request.form.get('name'),
             email=request.form.get('email'),
-            password=request.form.get('password')
+            password=hash_and_salted_password
         )
 
         db.session.add(new_user)
         db.session.commit()
+
+        login_user(new_user)
 
         return render_template('index.html')
 
     return render_template('register.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Find user by email entered.
+        result = db.session.execute(db.select(User).where(User.email == email))
+        user = result.scalar()
+
+        # Check stored password hash against entered password hashed.
+        if check_password_hash(user.password, password):
+            login_user(user)
+            return redirect(url_for('index'))
+
     return render_template("login.html")
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
