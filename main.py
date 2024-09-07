@@ -11,6 +11,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.secret_key = "SECRET_KEY_PLACEHOLDER"
 
+
+class Base(DeclarativeBase):
+    pass
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///time_tracker.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -91,7 +96,7 @@ def index():
     category_data = Category.query.order_by(Category.name.asc()).all()
     project_data = Project.query.order_by(Project.name.asc()).all()
     task_data = Task.query.order_by(Task.name.asc()).all()
-    return render_template('index.html', entries=entries, categories=category_data, projects=project_data, tasks=task_data, today=today, time=current_time, datetime=datetime, str=str)
+    return render_template('index.html', entries=entries, categories=category_data, projects=project_data, tasks=task_data, today=today, time=current_time, datetime=datetime, str=str, logged_in=current_user.is_authenticated)
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])
@@ -137,7 +142,7 @@ def delete_entry(entry_id):
 @login_required
 def categories():
     category_data = Category.query.order_by(Category.name.asc()).all()
-    return render_template('categories.html', categories=category_data)
+    return render_template('categories.html', categories=category_data, logged_in=current_user.is_authenticated)
 
 
 @app.route('/add-category', methods=['GET', 'POST'])
@@ -170,7 +175,7 @@ def delete_category(category_id):
 @login_required
 def projects():
     project_data = Project.query.order_by(Project.name.asc()).all()
-    return render_template('projects.html', projects=project_data)
+    return render_template('projects.html', projects=project_data, logged_in=current_user.is_authenticated)
 
 
 @app.route('/add-project', methods=['GET', 'POST'])
@@ -203,7 +208,7 @@ def delete_project(project_id):
 @login_required
 def tasks():
     task_data = Task.query.order_by(Task.name.asc()).all()
-    return render_template('tasks.html', tasks=task_data)
+    return render_template('tasks.html', tasks=task_data, logged_in=current_user.is_authenticated)
 
 
 @app.route('/add-task', methods=['GET', 'POST'])
@@ -235,6 +240,16 @@ def delete_task(task_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        email = request.form.get('email')
+        result = db.session.execute(db.select(User).where(User.email == email))
+
+        # Note, email in db is unique so will only have one result.
+        user = result.scalar()
+        if user:
+            # User already exists
+            flash("You've already signed up with that email, log in instead!")
+            return redirect(url_for('login'))
+
         hash_and_salted_password = generate_password_hash(
             request.form.get('password'),
             method='pbkdf2:sha256',
@@ -252,9 +267,9 @@ def register():
 
         login_user(new_user)
 
-        return render_template('index.html')
+        return redirect(url_for('index'))
 
-    return render_template('register.html')
+    return render_template('register.html', logged_in=current_user.is_authenticated)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -267,19 +282,22 @@ def login():
         result = db.session.execute(db.select(User).where(User.email == email))
         user = result.scalar()
 
-        # Check stored password hash against entered password hashed.
-        if check_password_hash(user.password, password):
+        if not user or not check_password_hash(user.password, password):
+            flash("Incorrect username or password, please try again.")
+            return redirect(url_for('login'))
+        else:
             login_user(user)
             return redirect(url_for('index'))
 
-    return render_template("login.html")
+
+    return render_template("login.html", logged_in=current_user.is_authenticated)
 
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
