@@ -47,6 +47,9 @@ def load_user(user_id):
     return db.get_or_404(User, user_id)
 
 
+tags = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -118,7 +121,8 @@ def index():
     category_data = Category.query.filter_by(user_id=current_user.id).order_by(Category.name.asc()).all()
     project_data = Project.query.filter_by(user_id=current_user.id).order_by(Project.name.asc()).all()
     task_data = Task.query.filter_by(user_id=current_user.id).order_by(Task.name.asc()).all()
-    return render_template('index.html', entries=entries, categories=category_data, projects=project_data, tasks=task_data, today=today, time=current_time, datetime=datetime, str=str, logged_in=current_user.is_authenticated)
+    tags_data = tags
+    return render_template('index.html', entries=entries, categories=category_data, projects=project_data, tasks=task_data, tags=tags_data, today=today, time=current_time, datetime=datetime, str=str, logged_in=current_user.is_authenticated)
 
 
 @app.route('/add-entry', methods=['GET', 'POST'])

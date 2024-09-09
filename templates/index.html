@@ -55,9 +55,15 @@
                              data-bs-toggle="dropdown"
                              aria-expanded="false">
 
-                        <div class="dropdown-menu form-check" aria-labelledby="tagDropdown" id="tagChecks">
+                        <div class="dropdown-menu form-check p-2" aria-labelledby="tagDropdown" id="tagChecks">
                             <span hidden>No Tags Available</span>
-                            <!--JAVASCRIPT TO HANDLE TAG OPTIONS-->
+                            <input type="search" class="dropdown-item form-control mb-2" autocomplete="false" placeholder="Search..." id="searchTag">
+                            {% for tag in tags %}
+                                <div class="form-check">
+                                    <input class="form-check-input tag-item" type="checkbox" value="" id="{{ tag }}Tag">
+                                    <label class="form-check-label tag-input" for="{{ tag }}Tag">{{ tag }}</label>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

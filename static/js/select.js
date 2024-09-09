@@ -15,3 +15,9 @@ document.querySelectorAll('.task-item').forEach(function(item) {
         document.getElementById('task-input').value = this.getAttribute('data-value');
     });
 });
+
+document.querySelectorAll('.tag-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+        document.getElementById('tag-input').value = this.getAttribute('data-value');
+    });
+});
