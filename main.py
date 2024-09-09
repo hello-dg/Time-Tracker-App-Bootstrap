@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean, create_engine, MetaData
+from sqlalchemy import ForeignKey
+from typing import List
 from sqlite3 import Date
 from datetime import datetime, date, time
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
@@ -38,24 +40,31 @@ class User(UserMixin, db.Model):
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=False)
     email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(100), nullable=False, unique=False)
+    category: Mapped[List['Category']] = relationship()
+    project: Mapped[List['Project']] = relationship()
+    task: Mapped[List['Task']] = relationship()
+    entry: Mapped[List['Entry']] = relationship()
 
 
 class Category(db.Model):
     __tablename__ = "categories"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
 
 class Project(db.Model):
     __tablename__ = "projects"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
 
 class Task(db.Model):
     __tablename__ = "tasks"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
 
 class Entry(db.Model):
@@ -70,7 +79,7 @@ class Entry(db.Model):
     date: Mapped[str] = mapped_column(String(200), nullable=False)
     start_time: Mapped[str] = mapped_column(String(200), nullable=False)
     end_time: Mapped[str] = mapped_column(String(20), nullable=False)
-
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     def __repr__(self):
         return f'<task {self.task}>'
