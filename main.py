@@ -29,8 +29,22 @@ login_manager.init_app(app)
 
 
 # Create a user_loader callback
+# @login_manager.user_loader
+# def load_user(user_id):
+#     try:
+#         user = db.get(User, user_id)
+#         if user is None:
+#             print(f"User with ID {user_id} not found.")
+#             return None
+#         return user
+#     except Exception as e:
+#         print(f"Error loading user: {e}")
+#         return None
+
+
 @login_manager.user_loader
 def load_user(user_id):
+    print("hello")
     return db.get_or_404(User, user_id)
 
 
@@ -40,10 +54,10 @@ class User(UserMixin, db.Model):
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=False)
     email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(100), nullable=False, unique=False)
-    category: Mapped[List['Category']] = relationship()
-    project: Mapped[List['Project']] = relationship()
-    task: Mapped[List['Task']] = relationship()
-    entry: Mapped[List['Entry']] = relationship()
+    category: Mapped[List['Category']] = relationship('Category', backref='user', lazy=True)
+    project: Mapped[List['Project']] = relationship('Project', backref='user', lazy=True)
+    task: Mapped[List['Task']] = relationship('Task', backref='user', lazy=True)
+    entry: Mapped[List['Entry']] = relationship('Entry', backref='user', lazy=True)
 
 
 class Category(db.Model):
@@ -121,7 +135,7 @@ def add_entry():
     start_time_data = str(request.form.get('start_time'))
     end_time_data = str(request.form.get('end_time'))
 
-    new_entry = Entry(category=category_data, project=project_data, task=task_data, note=note_data, billable=billable_boolean, date=date_data, start_time=start_time_data, end_time=end_time_data)
+    new_entry = Entry(category=category_data, project=project_data, task=task_data, note=note_data, billable=billable_boolean, date=date_data, start_time=start_time_data, end_time=end_time_data, user_id=current_user.id)
 
     try:
         db.session.add(new_entry)
@@ -158,7 +172,7 @@ def categories():
 @login_required
 def add_category():
     category_name = request.form.get('new-category')
-    new_category = Category(name=category_name)
+    new_category = Category(name=category_name, user_id=current_user.id)
 
     try:
         db.session.add(new_category)
@@ -191,7 +205,7 @@ def projects():
 @login_required
 def add_project():
     project_name = request.form.get('new-project')
-    new_project = Project(name=project_name)
+    new_project = Project(name=project_name, user_id=current_user.id)
 
     try:
         db.session.add(new_project)
@@ -224,7 +238,7 @@ def tasks():
 @login_required
 def add_task():
     task_name = request.form.get('new-task')
-    new_task = Task(name=task_name)
+    new_task = Task(name=task_name, user_id=current_user.id)
 
     try:
         db.session.add(new_task)
