@@ -44,7 +44,6 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    print("hello")
     return db.get_or_404(User, user_id)
 
 
@@ -115,10 +114,10 @@ def index():
         return redirect(url_for('login'))
     today = datetime.now().strftime('%Y-%m-%d')
     current_time = datetime.now().strftime('%H:%M')
-    entries = Entry.query.order_by(Entry.date.desc(), Entry.start_time.desc()).all()
-    category_data = Category.query.order_by(Category.name.asc()).all()
-    project_data = Project.query.order_by(Project.name.asc()).all()
-    task_data = Task.query.order_by(Task.name.asc()).all()
+    entries = Entry.query.filter_by(user_id=current_user.id).order_by(Entry.date.desc(), Entry.start_time.desc()).all()
+    category_data = Category.query.filter_by(user_id=current_user.id).order_by(Category.name.asc()).all()
+    project_data = Project.query.filter_by(user_id=current_user.id).order_by(Project.name.asc()).all()
+    task_data = Task.query.filter_by(user_id=current_user.id).order_by(Task.name.asc()).all()
     return render_template('index.html', entries=entries, categories=category_data, projects=project_data, tasks=task_data, today=today, time=current_time, datetime=datetime, str=str, logged_in=current_user.is_authenticated)
 
 
@@ -145,10 +144,6 @@ def add_entry():
         db.session.rollback()
         print(f"Error: {e}")
 
-    print(category_data)
-    print(project_data)
-    print(task_data)
-
     return redirect(url_for('index'))
 
 
@@ -164,7 +159,7 @@ def delete_entry(entry_id):
 @app.route('/categories')
 @login_required
 def categories():
-    category_data = Category.query.order_by(Category.name.asc()).all()
+    category_data = Category.query.filter_by(user_id=current_user.id).order_by(Category.name.asc()).all()
     return render_template('categories.html', categories=category_data, logged_in=current_user.is_authenticated)
 
 
@@ -197,7 +192,7 @@ def delete_category(category_id):
 @app.route('/projects')
 @login_required
 def projects():
-    project_data = Project.query.order_by(Project.name.asc()).all()
+    project_data = Project.query.filter_by(user_id=current_user.id).order_by(Project.name.asc()).all()
     return render_template('projects.html', projects=project_data, logged_in=current_user.is_authenticated)
 
 
@@ -230,7 +225,7 @@ def delete_project(project_id):
 @app.route('/tasks')
 @login_required
 def tasks():
-    task_data = Task.query.order_by(Task.name.asc()).all()
+    task_data = Task.query.filter_by(user_id=current_user.id).order_by(Task.name.asc()).all()
     return render_template('tasks.html', tasks=task_data, logged_in=current_user.is_authenticated)
 
 
