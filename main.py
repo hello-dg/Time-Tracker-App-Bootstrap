@@ -47,9 +47,6 @@ def load_user(user_id):
     return db.get_or_404(User, user_id)
 
 
-tags = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-
-
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -59,6 +56,7 @@ class User(UserMixin, db.Model):
     category: Mapped[List['Category']] = relationship('Category', backref='user', lazy=True)
     project: Mapped[List['Project']] = relationship('Project', backref='user', lazy=True)
     task: Mapped[List['Task']] = relationship('Task', backref='user', lazy=True)
+    tag: Mapped[List['Task']] = relationship('Tag', backref='user', lazy=True)
     entry: Mapped[List['Entry']] = relationship('Entry', backref='user', lazy=True)
 
 
@@ -78,6 +76,13 @@ class Project(db.Model):
 
 class Task(db.Model):
     __tablename__ = "tasks"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+
+
+class Tag(db.Model):
+    __tablename__ = "tags"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
@@ -121,7 +126,7 @@ def index():
     category_data = Category.query.filter_by(user_id=current_user.id).order_by(Category.name.asc()).all()
     project_data = Project.query.filter_by(user_id=current_user.id).order_by(Project.name.asc()).all()
     task_data = Task.query.filter_by(user_id=current_user.id).order_by(Task.name.asc()).all()
-    tags_data = tags
+    tags_data = Tag.query.filter_by(user_id=current_user.id).order_by(Tag.name.asc()).all()
     return render_template('index.html', entries=entries, categories=category_data, projects=project_data, tasks=task_data, tags=tags_data, today=today, time=current_time, datetime=datetime, str=str, logged_in=current_user.is_authenticated)
 
 
@@ -257,6 +262,39 @@ def delete_task(task_id):
     db.session.delete(task)
     db.session.commit()
     return redirect(url_for('tasks'))
+
+
+@app.route('/tags')
+@login_required
+def tags():
+    tag_data = Tag.query.filter_by(user_id=current_user.id).order_by(Tag.name.asc()).all()
+    return render_template('tags.html', tags=tag_data, logged_in=current_user.is_authenticated)
+
+
+@app.route('/add-tag', methods=['GET', 'POST'])
+@login_required
+def add_tag():
+    tag_name = request.form.get('new-tag')
+    new_tag = Tag(name=tag_name, user_id=current_user.id)
+
+    try:
+        db.session.add(new_tag)
+        db.session.commit()
+        print("Added to database")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+
+    return redirect(url_for('tags'))
+
+
+@app.route('/delete-tag/<int:tag_id>')
+@login_required
+def delete_tag(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+    return redirect(url_for('tags'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
