@@ -167,6 +167,14 @@ def delete_entry(entry_id):
     return redirect(url_for('index'))
 
 
+@app.route('/edit/<int:entry_id>')
+@login_required
+def edit_entry(entry_id):
+    entry = Entry.query.get_or_404(entry_id)
+    print(entry)
+    return redirect(url_for('index'))
+
+
 @app.route('/categories')
 @login_required
 def categories():

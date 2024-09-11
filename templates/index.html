@@ -84,6 +84,7 @@
         </form>
     </div>
 
+<!--PREVIOUS ENTRIES-->
     <div class="container" id="history">
         <ul class="list-group">
             <li class="list-group-item bg-light">
@@ -127,8 +128,11 @@
                                 {% else %}
                                 {% endif %}
                             </div>
-                            <div class="border-start border-end col-1 text-center">
-                                <a href="{{ url_for('delete_entry', entry_id=entry.id) }}" class="btn btn-danger btn-sm" style="font-size: 10px;">X</a>
+                            <div class="border-start border-end col-1 text-center pb-1">
+                                <a href="{{ url_for('edit_entry', entry_id=entry.id) }}">
+                                    <img src="{{ url_for('static', filename='icons/edit.png') }}" alt="Edit Entry" aria-label="Edit Entry" style="width: 20px; height: 20px; cursor: pointer;"></a>
+                                <a href="{{ url_for('delete_entry', entry_id=entry.id) }}">
+                                    <img src="{{ url_for('static', filename='icons/remove.png') }}" alt="Edit Entry" aria-label="Edit Entry" style="width: 20px; height: 20px; cursor: pointer;"></a>
                             </div>
                         </div>
                         <div class="fst-italic" style="font-size: 12px;">{{ entry.note }}</div>
