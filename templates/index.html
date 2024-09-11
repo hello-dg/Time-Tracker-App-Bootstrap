@@ -59,9 +59,8 @@
                             <span hidden>No Tags Available</span>
                             <input type="search" class="dropdown-item form-control mb-2" autocomplete="false" placeholder="Search..." id="searchTag">
                             {% for tag in tags %}
-                                <div class="form-check">
-                                    <input class="form-check-input tag-item" type="checkbox" value="" id="{{ tag.name }}Tag">
-                                    <label class="form-check-label tag-input" for="{{ tag.name }}Tag">{{ tag.name }}</label>
+                                <div class="m-1">
+                                    <input type="checkbox" name="tags" value="{{ tag.name }}"> {{ tag.name }}<br>
                                 </div>
                             {% endfor %}
                         </div>

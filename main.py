@@ -136,6 +136,8 @@ def add_entry():
     category_data = request.form.get('category')
     project_data = request.form.get('project')
     task_data = request.form.get('task')
+    tag_data = request.form.getlist('tags')
+    tag_data_str = ','.join(tag_data)
     note_data = request.form.get('note')
     billable_data = request.form.get('billable')
     billable_boolean = billable_data == 'on'
@@ -143,7 +145,7 @@ def add_entry():
     start_time_data = str(request.form.get('start_time'))
     end_time_data = str(request.form.get('end_time'))
 
-    new_entry = Entry(category=category_data, project=project_data, task=task_data, note=note_data, billable=billable_boolean, date=date_data, start_time=start_time_data, end_time=end_time_data, user_id=current_user.id)
+    new_entry = Entry(category=category_data, project=project_data, task=task_data, tags=tag_data_str, note=note_data, billable=billable_boolean, date=date_data, start_time=start_time_data, end_time=end_time_data, user_id=current_user.id)
 
     try:
         db.session.add(new_entry)
