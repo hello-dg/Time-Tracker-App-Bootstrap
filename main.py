@@ -158,7 +158,7 @@ def add_entry():
     return redirect(url_for('index'))
 
 
-@app.route('/delete/<int:entry_id>')
+@app.route('/delete-entry/<int:entry_id>')
 @login_required
 def delete_entry(entry_id):
     entry = Entry.query.get_or_404(entry_id)
@@ -167,11 +167,31 @@ def delete_entry(entry_id):
     return redirect(url_for('index'))
 
 
-@app.route('/edit/<int:entry_id>')
+@app.route('/edit-entry', methods=['GET', 'POST'])
 @login_required
-def edit_entry(entry_id):
-    entry = Entry.query.get_or_404(entry_id)
-    print(entry)
+def edit_entry():
+    category_data = request.form.get('category-modal')
+    project_data = request.form.get('project-modal')
+    task_data = request.form.get('task-modal')
+    tag_data = request.form.getlist('tags-modal')
+    tag_data_str = ','.join(tag_data)
+    note_data = request.form.get('note-modal')
+    billable_data = request.form.get('billable-modal')
+    billable_boolean = billable_data == 'on'
+    date_data = request.form.get('date-modal')
+    start_time_data = str(request.form.get('start_time-modal'))
+    end_time_data = str(request.form.get('end_time-modal'))
+
+    new_entry = Entry(category=category_data, project=project_data, task=task_data, tags=tag_data_str, note=note_data, billable=billable_boolean, date=date_data, start_time=start_time_data, end_time=end_time_data, user_id=current_user.id)
+
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        print("Added to database")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+
     return redirect(url_for('index'))
 
 

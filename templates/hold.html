@@ -1,0 +1,73 @@
+<div class="container" id="formModal">
+    <form action="{{ url_for('add_entry') }}" id="time-entry-form-Modal" method="POST">
+        <div class="div d-flex align-items-center" id="form-top-row-Modal">
+
+            <!--CATEGORY DROPDOWN-->
+            <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Category</button>
+            <ul class="dropdown-menu searchCategoryModal">
+                <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchCategoryModal">
+                {% for category in categories %}
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 category-item" data-value="{{ category.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+            <input type="hidden" name="categoryModal" id="category-input-Modal">
+
+            <!--PROJECT DROPDOWN-->
+            <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Project</button>
+            <ul class="dropdown-menu searchProjectModal">
+                <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchProjectModal">
+                {% for project in projects %}
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 project-item" data-value="{{ project.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ project.name }}</a></li>
+                {% endfor %}
+            </ul>
+            <input type="hidden" name="projectModal" id="project-input-Modal">
+
+            <!--TASK DROPDOWN-->
+            <button class="btn dropdown-toggle btn-outline-secondary col m-2" type="button" data-bs-toggle="dropdown">Task</button>
+            <ul class="dropdown-menu searchTaskModal">
+                <input type="search" class="dropdown-item form-control" autocomplete="false" placeholder="Type to Search..." id="searchTaskModal">
+                {% for task in tasks %}
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 task-item" data-value="{{ task.name }}" href="#"><span class="d-inline-block bg-success rounded-circle p-1"></span>{{ task.name }}</a></li>
+                {% endfor %}
+            </ul>
+            <input type="hidden" name="taskModal" id="task-input-Modal">
+
+            <!--TAG SELECTION-->
+                <div class="form-group text-center" id="tagSelectorModal">
+                <div class="dropdown">
+                    <img src="{{ url_for('static', filename='icons/tag_not_selected_64.png') }}"
+                         class="dropdown-toggle"
+                         style="width: 32px; height: 32px; cursor: pointer;"
+                         aria-label="Tag Select"
+                         id="tagDropdownModal"
+                         data-bs-toggle="dropdown"
+                         aria-expanded="false">
+
+                    <div class="dropdown-menu form-check p-2" aria-labelledby="tagDropdown" id="tagChecksModal">
+                        <span hidden>No Tags Available</span>
+                        <input type="search" class="dropdown-item form-control mb-2" autocomplete="false" placeholder="Search..." id="searchTagModal">
+                        {% for tag in tags %}
+                            <div class="m-1">
+                                <input type="checkbox" name="tagsModal" value="{{ tag.name }}"> {{ tag.name }}<br>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!--BILLABLE SELECTION-->
+            <input type="checkbox" class="btn-check" name="billableModal" id="billableModal" autocomplete="off">
+            <label class="btn btn-outline-success bold m-2" for="billableModal">$$</label>
+        </div>
+
+        <div class="div d-flex" id="form-middle-row-Modal">
+            <input type="date" class="form-control col m-2" id="dateModal" name="dateModal" value="{{ today }}" required>
+            <input type="time" class="form-control col m-2" id="start_timeModal" name="start_timeModal" value="{{ time }}" required>
+            <input type="time" class="form-control col m-2" id="end_timeModal" name="end_timeModal" value="{{ time }}" required>
+        </div>
+        <div class="div d-flex" id="form-bottom-row-Modal">
+            <input type="text" class="form-control col m-2" placeholder="New Note" id="noteModal" name="noteModal">
+            <button class="btn btn-primary m-2 w-25" type="submit" id="submitModal">Add Entry</button>
+        </div>
+    </form>
+</div>
