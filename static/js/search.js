@@ -49,3 +49,18 @@ taskInput.addEventListener('input', () => {
 });
 
 
+const taskInput = document.getElementById('searchTaskModal');
+const taskList = document.querySelectorAll('.searchTaskModal li');
+
+taskInput.addEventListener('input', () => {
+    const query = taskInput.value.toLowerCase();
+
+    taskList.forEach(item => {
+        const clientName = item.textContent.toLowerCase();
+        if (clientName.includes(query)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
