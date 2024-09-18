@@ -10,6 +10,7 @@
 <body>
     {% include 'navbar.html' %}
 
+    <!--ADD ENTRY-->
     <div class="container" id="form">
         <form action="{{ url_for('add_entry') }}" id="time-entry-form" method="POST">
             <div class="div d-flex align-items-center" id="form-top-row">
@@ -85,7 +86,7 @@
         </form>
     </div>
 
-<!--PREVIOUS ENTRIES-->
+    <!--PREVIOUS ENTRIES-->
     <div class="container" id="history">
         <ul class="list-group">
             <li class="list-group-item bg-light">
@@ -93,34 +94,102 @@
                     <div class="fw-bold fs-5">Previous Entries</div>
                 </div>
                 {% for entry in entries %}
+                    <!--FIRST ROW-->
                     <div class="row border rounded bg-white mb-2 pb-2">
                         <div class="row align-items-center mt-2">
-                            <div class="col-3 fw-bold border-end">{{ entry.project }}</div>
-                            <div class="col-3">{{ entry.task }}</div>
+
+                            <!--PROJECT-->
+                            <div class="col-3 fw-bold border-end d-none d-lg-block">
+                                {% if entry.project|length > 22 %}
+                                    {{ entry.project[:22] }}...
+                                {% else %}
+                                    {{ entry.project }}
+                                {% endif %}
+                            </div>
+                            <div class="col-5 fw-bold border-end d-none d-md-block d-lg-none">
+                                {% if entry.project|length > 15 %}
+                                    {{ entry.project[:15] }}...
+                                {% else %}
+                                    {{ entry.project }}
+                                {% endif %}
+                            </div>
+                            <div class="col-5 fw-bold border-end d-md-none">
+                                {% if entry.project|length > 13 %}
+                                    {{ entry.project[:13] }}...
+                                {% else %}
+                                    {{ entry.project }}
+                                {% endif %}
+                            </div>
+
+                            <!--TASK-->
+                            <div class="col-3 d-none d-lg-block">
+                                {% if entry.task|length > 24 %}
+                                    {{ entry.task[:24] }}...
+                                {% else %}
+                                    {{ entry.task }}
+                                {% endif %}
+                            </div>
+                            <div class="col-4 d-none d-md-block d-lg-none">
+                                {% if entry.task|length > 20 %}
+                                    {{ entry.task[:20] }}...
+                                {% else %}
+                                    {{ entry.task }}
+                                {% endif %}
+                            </div>
+                            <div class="col-4 d-md-none">
+                                {% if entry.task|length > 13 %}
+                                    {{ entry.task[:13] }}...
+                                {% else %}
+                                    {{ entry.task }}
+                                {% endif %}
+                            </div>
+
+                            <!--BILLABLE-->
                             {% if entry.billable %}
                                 <div class="col-1 fw-bold fs-5 text-success text-center border-start">$</div>
                             {% else %}
                                 <div class="col-1 border-start">&nbsp</div>
                             {% endif %}
-    <!--                            <div class="col-2 border-start text-muted fw-bold text-center">{{ datetime.strptime(entry.date, "%Y-%m-%d").strftime("%m/%d/%Y") }}</div>-->
 
-                            <!--DATES-->
-                            <div class="col-2 border-start text-muted fw-bold text-center">
-                                <!-- Full Date Format (visible on large screens) -->
-                                <span class="d-none d-lg-inline">
-                                    {{ datetime.strptime(entry.date, "%Y-%m-%d").strftime("%m/%d/%Y") }}
-                                </span>
-
-                                <!-- Short Date Format (visible on small screens) -->
-                                <span class="d-inline d-lg-none">
-                                    {{ datetime.strptime(entry.date, "%Y-%m-%d").strftime("%m/%d") }}
-                                </span>
+                            <!--DATE-->
+                            <div class="col-2 border-start text-muted fw-bold text-center d-none d-lg-inline">
+                                {{ datetime.strptime(entry.date, "%Y-%m-%d").strftime("%m/%d/%Y") }}
+                            </div>
+                            <div class="col-2 border-start border-end text-muted fw-bold text-center d-inline d-lg-none">
+                                {{ datetime.strptime(entry.date, "%Y-%m-%d").strftime("%m/%d") }}
                             </div>
 
-                            <div class="col-3 border-start border-end text-muted fw-bold text-center">{{ str(datetime.strptime(entry.start_time, "%H:%M").strftime("%I:%M %p")) }} - {{ str(datetime.strptime(entry.end_time, "%H:%M").strftime("%I:%M %p")) }}</div>
+                            <!--TIMES-->
+                            <div class="col-3 border-start border-end text-muted fw-bold text-center d-none d-lg-block">{{ str(datetime.strptime(entry.start_time, "%H:%M").strftime("%I:%M %p")) }} - {{ str(datetime.strptime(entry.end_time, "%H:%M").strftime("%I:%M %p")) }}</div>
                         </div>
+
+                        <!--SECOND ROW-->
                         <div class="row d-flex align-items-center mt-1">
-                            <div class="col-3 text-primary">{{ entry.category }}</div>
+
+                            <!--CATEGORY-->
+                            <div class="col-3 text-primary d-none d-lg-block">
+                                {% if entry.category|length > 22 %}
+                                    {{ entry.category[:22] }}...
+                                {% else %}
+                                    {{ entry.category }}
+                                {% endif %}
+                            </div>
+                            <div class="col-3 text-primary d-none d-md-block d-lg-none">
+                                {% if entry.category|length > 15 %}
+                                    {{ entry.category[:15] }}...
+                                {% else %}
+                                    {{ entry.category }}
+                                {% endif %}
+                            </div>
+                            <div class="col-3 text-primary d-md-none">
+                                {% if entry.category|length > 8 %}
+                                    {{ entry.category[:8] }}...
+                                {% else %}
+                                    {{ entry.category }}
+                                {% endif %}
+                            </div>
+
+                            <!--TAGS-->
                             <div class="col-8 text-end">
                                 {% if entry.tags %}
                                     {% for tags in entry.tags.split(',') %}
@@ -129,8 +198,9 @@
                                 {% else %}
                                 {% endif %}
                             </div>
-                            <div class="border-start border-end col-1 text-center pb-1">
 
+                            <!--EDIT AND DELETE-->
+                            <div class="border-start border-end col-1 text-center pb-1">
                                 <!--EDIT ENTRY-->
                                     <img src="{{ url_for('static', filename='icons/edit.png') }}" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ entry.id }}" id="edit-entry" alt="Edit Entry" aria-label="Edit Entry" style="width: 20px; height: 20px; cursor: pointer;">
                                     {% include 'modal.html' %}
@@ -140,6 +210,8 @@
                                     <img src="{{ url_for('static', filename='icons/remove.png') }}" alt="Edit Entry" aria-label="Edit Entry" style="width: 20px; height: 20px; cursor: pointer;"></a>
                             </div>
                         </div>
+
+                        <!--THIRD ROW-->
                         <div class="fst-italic" style="font-size: 12px;">{{ entry.note }}</div>
                     </div>
                 {% endfor %}
